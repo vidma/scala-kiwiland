@@ -28,7 +28,7 @@ The Main code is is src/main/scala which contains the following files:
  * ShortestPath - implements 1) Floyd-Warshall and 2) Dijkstra based on min-queue
  * TripsCounter - a basic recursive counter of different routes available
  * SimpleUpdatableMinQueue - basic updatable min-queue on top of scala's Scala's HashSet
-  - TODO: for better performance an adapted minHeap shall be used, which would keep track of the physical location of each entry in the heap
+  - *Note: for better performance an adapted minHeap shall be used, which would keep track of the physical location of each entry in the heap*
 
 Tests
 ----------------------------

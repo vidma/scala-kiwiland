@@ -1,9 +1,9 @@
 Installation
 ----------------------------
-The only prerequisite is ```sbt```, the scala build tool
- ( http://www.scala-sbt.org/ ). Sbt will take care of all the dependencies, will compile and allow running the code and  tests easily. 
+The only prerequisite is ```sbt```, the [Scala Build Tool](www.scala-sbt.org). 
+Sbt will take care of all the dependencies, will compile and allow running the code and  tests easily. 
   
-When running any of Sbt commands, it  would also recompile the modified code automatically if needed.
+When you run any ```sbt``` command, it  will automatically recompile the modified code if needed.
 
 Running the tests and code-checks
 ----------------------------
@@ -34,9 +34,9 @@ Tests
 ----------------------------
 The tests are contained in src/test/scala:
  
- * TestSuite contains the unit tests 
-     - sample output in the assignment
-     - calls the large number of randomized tests based on arbitrary inputs generated with help of the ScalaCheck lib (see below)
+ * TestSuite contains the unit tests based on:
+     - sample output from the assignment
+     - running a large number of randomized tests based on arbitrary inputs generated with help of the [ScalaCheck](www.scalacheck.org) lib (details below)
  * CheckShortestPath - for a number of arbitrary graphs, ensures that results by the two Shortest-Path algorithms are the same for all pairs of nodes  
  * GraphGenerator - generates random arbitrary graphs
  * CheckUpdatableMinQueue - generates random priority queues and checks that findMin and updatePriority methods work correctly 

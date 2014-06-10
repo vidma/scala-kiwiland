@@ -2,9 +2,14 @@ name := "vinted"
 
 version := "1.0.0"
 
-scalaVersion := "2.10.2"
+//scalaVersion := "2.10.0"
+scalaVersion := "2.9.2"
 
 scalacOptions ++= Seq("-deprecation", "-feature")
+
+//ScoverageSbtPlugin.instrumentSettings
+
+//CoverallsPlugin.coverallsSettings
 
 // include only in tests (last param)
 libraryDependencies += "org.scalatest" %% "scalatest" % "1.9.2" % "test"

@@ -40,3 +40,6 @@ The tests are contained in src/test/scala:
  * CheckShortestPath - for a number of arbitrary graphs, ensures that results by the two Shortest-Path algorithms are the same for all pairs of nodes  
  * GraphGenerator - generates random arbitrary graphs
  * CheckUpdatableMinQueue - generates random priority queues and checks that findMin and updatePriority methods work correctly 
+
+Note: in a more serious project, additionally, code coverage should be checked, e.g. with sbt-scoverage. 
+Anyway, it seems these sbt plugins might be slightly outdated in the repositories and are not easily resolved by sbt.   

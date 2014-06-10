@@ -5,7 +5,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import java.lang.Exception
 import kwl._
-import TripsCounter.CType._
+import TripsCounter.CounterTypeEnum._
 
 
 @RunWith(classOf[JUnitRunner])
@@ -26,46 +26,43 @@ class TestSuite extends FunSuite with Checkers {
     }
   }
 
+  test("test 5: error msg") {
+    assertResult(kwl.MsgNoRouteFound) {
+      kwl.routeDistOrMsg("AED")
+    }
+  }
+
   test("test 6") {
     assertResult(2) {
-      TripsCounter(MAX_STOPS, kwl.g, 'C', 'C', 3).count
+      kwl.countTrips(MAX_STOPS, 'C', 'C', 3)
     }
   }
 
   test("test 7") {
     assertResult(3) {
-      TripsCounter(EXACT_STOPS, kwl.g, 'A', 'C', 4).count
+      kwl.countTrips(EXACT_STOPS, 'A', 'C', 4)
     }
   }
 
   test("test 8") {
-    assert(kwl.shortestPath('A', 'C') == 9)
+    assertResult(9) {
+      kwl.shortestPath('A', 'C')
+    }
   }
 
   test("test 9") {
-    assert(kwl.shortestPath('B', 'B') == 9)
+    assertResult(9) {
+      kwl.shortestPath('B', 'B')
+    }
   }
 
   test("test 10") {
     assertResult(7) {
-      TripsCounter(MAX_DIST, kwl.g, 'C', 'C', 0, 30).count
+      kwl.countTrips(MAX_DIST,'C', 'C', 0, 30)
     }
   }
-
-  /*
-  var scalachecks = List(
-    CheckUpdatableMinQueue.propFindMinSorted, CheckUpdatableMinQueue.propUpdateWorks,
-    CheckShortestPath.propDijkstraFloydMatches
-  )
-  for (scheck <- scalachecks) {
-    test("scalacheck: " + scheck){
-      check(scheck)
-    }
-  }
-*/
 
   test("run ScalaCheck: propFindMinSorted") {
-    // TODO: how to make it verbose?
     check(CheckUpdatableMinQueue.propFindMinSorted)
   }
 
@@ -77,13 +74,13 @@ class TestSuite extends FunSuite with Checkers {
     check(CheckShortestPath.propDijkstraFloydMatches)
   }
 
-  test("test 8: floyd Warshall") {
+  test("test 8: with floyd Warshall") {
     assertResult(9) {
       AllShortestPaths.shortestPath(kwl.g, 'A', 'C')
     }
   }
 
-  test("test 9: floyd Warshall") {
+  test("test 9: with floyd Warshall") {
     assertResult(9) {
       AllShortestPaths.shortestPath(kwl.g, 'B', 'B')
     }

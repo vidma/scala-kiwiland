@@ -1,8 +1,7 @@
 package kwl
 
 import Graph.NodeId
-import TripsCounter.CType.{MAX_DIST, EXACT_STOPS, CType}
-
+import TripsCounter.CounterTypeEnum.{MAX_DIST, EXACT_STOPS, CType}
 
 /**
  * Counting the number of different paths in a graph without cycles
@@ -34,7 +33,7 @@ class TripsCounter(g: Graph, from: NodeId, to: NodeId, val max_stops: Int, val m
     trips
   }
 
-  def count(): Int = countTrips(from, 0, 0)
+  def getCount(): Int = countTrips(from, 0, 0)
 }
 
 trait ExactDistCounter extends TripsCounter {
@@ -54,14 +53,22 @@ trait MaxDistCounter extends TripsCounter {
  */
 object TripsCounter {
 
-  object CType extends Enumeration {
-    type CType = Value
+  object CounterTypeEnum extends Enumeration {
     val MAX_DIST, EXACT_STOPS, MAX_STOPS = Value
+    type CType = Value
   }
+}
 
-  def apply(t: CType, g: Graph, from: NodeId, to: NodeId, max_stops: Int, max_dist: Int = 0): TripsCounter = t match {
-    case MAX_DIST => new TripsCounter(g, from, to, max_stops, max_dist) with MaxDistCounter
-    case EXACT_STOPS => new TripsCounter(g, from, to, max_stops, max_dist) with ExactDistCounter
-    case _ => new TripsCounter(g, from, to, max_stops, max_dist)
+trait KwlTripsCounter extends KwlBase {
+  /**
+  * count the number of different trips according to the counter type
+  */
+  def countTrips(t: CType, from: NodeId, to: NodeId, max_stops: Int, max_dist: Int = 0): Int = {
+    val cls = t match {
+      case MAX_DIST => new TripsCounter(this.g, from, to, max_stops, max_dist) with MaxDistCounter
+      case EXACT_STOPS => new TripsCounter(this.g, from, to, max_stops, max_dist) with ExactDistCounter
+      case _ => new TripsCounter(this.g, from, to, max_stops, max_dist)
+    }
+    cls.getCount()
   }
 }

@@ -1,40 +1,35 @@
 package kwl
 
-import kwl.Graph._
-import scala.Some
+import scala.util.{Try, Success, Failure}
+
+import kwl.Graph.{Route, NodeId}
 
 
-trait RouteDist extends Kwl {
+trait RouteDist extends KwlBase {
   /**
    * get the distance of a specified route or throw an exception
    */
+  val MsgNoRouteFound = "NO SUCH ROUTE"
+
+  protected def reportNoRoute = throw new Exception(MsgNoRouteFound)
+
   def routeDist(route: Route): Int = route match {
+    // fetch the first two nodes on the route if any, and continue recursively
     case from :: to :: rest =>
-      val dist = findEdge(from, to) match {
-        case Some(edgeOut: Edge) => edgeOut.dist
-        case _ => throw new Exception("NO SUCH ROUTE")
-      }
-      routeDist(to :: rest) + dist
+      edgeDist(from, to).getOrElse(reportNoRoute) + routeDist(to :: rest)
     case _ => 0
   }
 
-  protected def findEdge(from: NodeId, to: NodeId): Option[Edge] = for {
+  protected def edgeDist(from: NodeId, to: NodeId): Option[Int] = for {
     from_edges <- g.edgesMap.get(from)
     edge <- from_edges.find(_.to == to)
-  } yield edge
+  } yield edge.dist
 
   def routeDist(s: String): Int = routeDist(s.toList)
 
-  /**
-   * given a route as a string, print its distance or an error message
-   */
-  def routeDistPrint(s: String): Unit = {
-    try {
-      println(routeDist(s.toList))
-    }
-    catch {
-      case e: Exception => println(e.getMessage)
-    }
+  def routeDistOrMsg(s: String): String = Try(routeDist(s)) match {
+    case Success(dist) => dist.toString
+    case Failure(e) => e.getMessage
   }
 
 }

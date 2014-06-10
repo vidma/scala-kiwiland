@@ -24,24 +24,24 @@ object DijkstraShortestPath extends ShortestPathAlg {
 
     // enqueue the edges directly reachable from src
     for (edge <- g.edgesMap(src)) {
-      q.enqueue(edge.to, edge.dist)
+      q += ((edge.dist, edge.to))
       dists(edge.to) = edge.dist
     }
 
     while (!q.isEmpty) {
-      val (from, cur_dist) = q.findMin
+      val (cur_dist, from) = q.popMin()
       visited += from
 
       for (Edge(_, v, edge_dist) <- g.edgesMap(from) if !visited.contains(v)) {
-        // if new dist is better enqueue/update its priority
         val new_dist = cur_dist + edge_dist
+        // if new dist is better, enqueue it or update its priority
         if (!dists.isDefinedAt(v) || new_dist < dists(v)) {
-          q.updatePriority(v, new_dist)
+          q.updatePriority(new_dist, v)
           dists(v) = new_dist
         }
       }
     }
-    dists.get(to).getOrElse(NO_PATH)
+    dists.get(to) getOrElse NO_PATH
   }
 }
 

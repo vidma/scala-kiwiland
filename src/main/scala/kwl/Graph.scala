@@ -1,6 +1,6 @@
 package kwl
 
-import Graph._
+import Graph.{NodeId, EdgeTupleIdx}
 
 case class Edge(from: NodeId, to: NodeId, dist: Int) {
   override def toString: String = s"($from->$to: $dist)"
@@ -23,21 +23,21 @@ class Graph(val edgesList: List[Edge]) {
 
   /** set of all nodes */
   val nodesList: List[NodeId] =
-    (Set.empty ++ (edgesList map (_.from)) ++ (edgesList map (_.to))).toList
+    (Set.empty ++ edgesList.map(_.from) ++ edgesList.map(_.to)).toList
 
   /** a map allowing to rename nodeName into its index */
   val node_id_num = nodesList.zipWithIndex.toMap
 
   /** edgeList using numeric node ids */
-  val edgesNumeric: List[EdgeTupleIdx] = edgesList map (
-    e => (node_id_num(e.from), node_id_num(e.to), e.dist))
+  val edgesNumeric: List[EdgeTupleIdx] = edgesList map {
+    e => (node_id_num(e.from), node_id_num(e.to), e.dist) }
 
 }
 
 object Graph {
   type NodeId = Char
   type Route = List[NodeId]
-  type EdgeTuple = (NodeId, NodeId, Int)
+  type WeightedEdgeTup = (NodeId, NodeId, Int)
 
   /** a tuple representing an edge using numeric node ids */
   type EdgeTupleIdx = (Int, Int, Int)
@@ -47,13 +47,13 @@ object Graph {
 
   /** create a graph from edge definitions (string like AB7) */
   def createGraph(lines: Array[String]): Graph = {
-    val edges = for (List(from, to, dist) <- lines.map(_.toList))
+    val edges = for (List(from, to, dist) <- lines map { _.toList } )
     yield Edge(from, to, Integer.parseInt(dist.toString))
     Graph(edges.toList)
   }
 
   /** create a graph from edge definitions (tuples) */
-  def createGraph(edge_list: List[EdgeTuple]): Graph =
-    Graph(edge_list.map { case (from, to, dist) => Edge(from, to, dist)})
+  def createGraph(edge_list: List[WeightedEdgeTup]): Graph =
+    Graph(edge_list map { case (from, to, dist) => Edge(from, to, dist) } )
 
 }

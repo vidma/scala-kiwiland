@@ -1,5 +1,6 @@
 language: scala
 scala:
    # - 2.9.3 # not needed, but could be supported by dropping use of string String Interpolation
+   - 2.10.0
    - 2.10.4
-   - 2.11.0
+   #- 2.11.0

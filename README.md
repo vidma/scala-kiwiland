@@ -44,4 +44,6 @@ The tests are contained in [src/test/scala/](src/test/scala/):
  * ```CheckUpdatableMinQueue``` - generates random priority queues and checks that findMin and updatePriority methods work correctly 
 
 Note: in a more serious project, additionally, code coverage should be checked, e.g. with sbt-scoverage. 
-Anyway, it seems these sbt plugins might be slightly outdated in the repositories and are not easily resolved by sbt.   
+Anyway, it seems these sbt plugins might be slightly outdated in the repositories and are not easily resolved by sbt. 
+
+Test results can be seen here: [![Build Status](https://travis-ci.org/vidma/scala-kiwiland.svg?branch=master)](https://travis-ci.org/vidma/scala-kiwiland)

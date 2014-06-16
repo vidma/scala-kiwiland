@@ -1,7 +1,8 @@
-scalaVersion := "2.9.2"
-//scalaVersion := "2.10.2"
+//scalaVersion := "2.9.2"
+scalaVersion := "2.10.3"
 
-addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.4.0")
+// this plugin seem to have some compatibility issues for some less common scala/sbt versions
+//addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.4.0")
 
 resolvers += "sonatype-releases" at "https://oss.sonatype.org/content/repositories/releases/"
 

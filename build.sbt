@@ -5,7 +5,7 @@ version := "1.0.0"
 //scalaVersion := "2.10.2"
 //scalaVersion := "2.10.0"
 
-scalaVersion := "2.10.1"
+scalaVersion := "2.10.3"
 
 scalacOptions ++= Seq("-deprecation" )
 
@@ -27,4 +27,4 @@ libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.10.1" % "test"
 // projects are included, or one of the project names from the projectDetailsMap.
 //currentProject := ""
 
-org.scalastyle.sbt.ScalastylePlugin.Settings
+//org.scalastyle.sbt.ScalastylePlugin.Settings

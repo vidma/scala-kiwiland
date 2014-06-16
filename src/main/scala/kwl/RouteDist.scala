@@ -5,7 +5,7 @@ import scala.util.{Try, Success, Failure}
 import kwl.Graph.{Route, NodeId}
 
 
-trait RouteDist extends KwlBase {
+trait RouteDist extends KiwilandBase {
   /**
    * get the distance of a specified route or throw an exception
    */
@@ -21,7 +21,7 @@ trait RouteDist extends KwlBase {
   }
 
   protected def edgeDist(from: NodeId, to: NodeId): Option[Int] = for {
-    from_edges <- g.edgesMap.get(from)
+    from_edges <- g.outEdges.get(from)
     edge <- from_edges.find(_.to == to)
   } yield edge.dist
 

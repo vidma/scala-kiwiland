@@ -11,26 +11,30 @@ case class Node(id: NodeId, edgesOut: List[Edge])
 /**
  * A graph structure based on adjacency-lists.
  *
- * it contains two major structures:
+ * it provides access to a couple of different graph representations:
  * - edgeMap, a dictionary of alphabetically named edges by grouped by outgoing node
  * - edgesNumeric, a flat list of edges named with numeric ids
- * * the numeric id is the Node's index in the nodesList, and may be obtained via node_id_num
+ *     * the numeric id is the Node's index in the nodesList, and may be obtained via node_id_num
+ * - adjacency matrix (0 if no edge else edge distance)
  */
 class Graph(val edgesList: List[Edge]) {
-  /** map of outgoing edges */
-  val edgesMap: Map[NodeId, List[Edge]] =
+  /** map of outgoing edges: a dictionary of alphabetically named edges, grouped by outgoing node */
+  lazy val outEdges: Map[NodeId, List[Edge]] =
     Map.empty.withDefaultValue(List[Edge]()) ++ edgesList.groupBy(_.from)
 
   /** set of all nodes */
-  val nodesList: List[NodeId] =
+  lazy val nodesList: List[NodeId] =
     (Set.empty ++ edgesList.map(_.from) ++ edgesList.map(_.to)).toList
 
+  /** # of nodes in the graph */
+  val nNodes: Int = nodesList.size
+
   /** a map allowing to rename nodeName into its index */
-  val node_id_num = nodesList.zipWithIndex.toMap
+  lazy val nodeNum = nodesList.zipWithIndex.toMap
 
   /** edgeList using numeric node ids */
-  val edgesNumeric: List[EdgeTupleIdx] = edgesList map {
-    e => (node_id_num(e.from), node_id_num(e.to), e.dist) }
+  lazy val edgesNumeric: List[EdgeTupleIdx] = edgesList map {
+    e => (nodeNum(e.from), nodeNum(e.to), e.dist) }
 
 }
 
@@ -38,6 +42,8 @@ object Graph {
   type NodeId = Char
   type Route = List[NodeId]
   type WeightedEdgeTup = (NodeId, NodeId, Int)
+  type RouteDistT = Long // TODO: use this constant everywhere?
+
 
   /** a tuple representing an edge using numeric node ids */
   type EdgeTupleIdx = (Int, Int, Int)

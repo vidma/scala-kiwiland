@@ -1,12 +1,11 @@
+import kwl.utils.SimpleUpdatableMinQueue
 import org.scalacheck.Properties
 import org.scalacheck.Prop.forAll
 import org.scalacheck.Gen
 import org.scalacheck.Gen._
 import org.scalacheck.Gen.alphaUpperChar
 import org.scalacheck.Arbitrary
-
-import kwl.SimpleUpdatableMinQueue
-import kwl.SimpleUpdatableMinQueue.{QueueEntry, T}
+import SimpleUpdatableMinQueue.{QueueEntry, T, WeightT}
 
 /**
  * The scalacheck generates "random" inputs and check that the properties defined below do hold
@@ -76,7 +75,7 @@ object CheckUpdatableMinQueue extends Properties("UpdatableMinQueue") {
    * generator of arbitrary params to propUpdateWorks
    * (initial Queue; indexes to be updated and the new priorities)
    */
-  def genUpdatesQ: Gen[(Array[QueueEntry], List[(Int, Int)])] = for {
+  def genUpdatesQ: Gen[(Array[QueueEntry], List[(Int, WeightT)])] = for {
     queue: QueueT <- genPriorityQ
     indexes: List[Int] <- listOf(choose[Int](0, queue.length - 1)) // index in the queue
     new_weights <- listOfN(indexes.length, genSmallPosNum)

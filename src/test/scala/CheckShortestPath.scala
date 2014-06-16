@@ -2,7 +2,7 @@ import org.scalacheck.Properties
 import org.scalacheck.Prop.forAll
 import org.scalacheck.Prop._
 
-import kwl.AllShortestPaths.{extractDist, allShortestPaths}
+import kwl.FloydWarshall.{extractDist, allShortestPaths}
 import kwl.DijkstraShortestPath
 import kwl.Graph
 import GraphGenerator.arbGraph

@@ -5,7 +5,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import java.lang.Exception
 import kwl._
-import TripsCounter.CounterTypeEnum._
+import TripsCounter._
 
 
 @RunWith(classOf[JUnitRunner])
@@ -34,13 +34,14 @@ class TestSuite extends FunSuite with Checkers {
 
   test("test 6") {
     assertResult(2) {
-      kwl.countTrips(MAX_STOPS, 'C', 'C', 3)
+      kwl.countTrips('C', 'C', MaxEdgeNumCond(3))
+
     }
   }
 
   test("test 7") {
     assertResult(3) {
-      kwl.countTrips(EXACT_STOPS, 'A', 'C', 4)
+      kwl.countTrips('A', 'C', ExactEdgeNumCond(4))
     }
   }
 
@@ -58,7 +59,7 @@ class TestSuite extends FunSuite with Checkers {
 
   test("test 10") {
     assertResult(7) {
-      kwl.countTrips(MAX_DIST,'C', 'C', 0, 30)
+      kwl.countTrips('C', 'C', MaxDistCond(30))
     }
   }
 
@@ -76,14 +77,18 @@ class TestSuite extends FunSuite with Checkers {
 
   test("test 8: with floyd Warshall") {
     assertResult(9) {
-      AllShortestPaths.shortestPath(kwl.g, 'A', 'C')
+      FloydWarshall.shortestPath(kwl.g, 'A', 'C')
     }
   }
 
   test("test 9: with floyd Warshall") {
     assertResult(9) {
-      AllShortestPaths.shortestPath(kwl.g, 'B', 'B')
+      FloydWarshall.shortestPath(kwl.g, 'B', 'B')
     }
+  }
+
+  test("TripsCounter: DP vs complete recursion") {
+    check(CheckTripsCounter.propRecursionMatchesDynProg)
   }
 
 }

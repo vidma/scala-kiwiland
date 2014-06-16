@@ -1,7 +1,6 @@
-package kwl
+package kwl.utils
 
-import scala.collection.TraversableOnce
-
+import SimpleUpdatableMinQueue._
 
 /**
  * A basic Priority Queue with Updatable Priorities.
@@ -16,9 +15,8 @@ import scala.collection.TraversableOnce
  *     * e.g. Array for low number of elements, or a HashTable for more fancy types  O(1)
  * - once found the required heap entry, modify it and shiftUp/down O(log n)
  */
-
-class SimpleUpdatableMinQueue[T] extends collection.mutable.HashSet[(Int, T)] {
-  type QueueEntry = (Int, T) // (priority, entry)
+class SimpleUpdatableMinQueue[T] extends collection.mutable.HashSet[(WeightT, T)] {
+  type QueueEntry = (WeightT, T) // (priority, entry)
 
   override def iterator: Iterator[QueueEntry] = new Iterator[QueueEntry] {
     def hasNext: Boolean = !this.isEmpty
@@ -32,7 +30,7 @@ class SimpleUpdatableMinQueue[T] extends collection.mutable.HashSet[(Int, T)] {
     minElm
   }
 
-  def updatePriority(new_weight: Int, entry: T): Unit = {
+  def updatePriority(new_weight: WeightT, entry: T): Unit = {
     this.retain(_._2 != entry) // remove the element if exists, TODO: this lookup could be faster
     this += ((new_weight, entry))
   }
@@ -40,5 +38,6 @@ class SimpleUpdatableMinQueue[T] extends collection.mutable.HashSet[(Int, T)] {
 
 object SimpleUpdatableMinQueue {
   type T = Char
-  type QueueEntry = (Int, T) // (priority, entry)
+  type WeightT = Int
+  type QueueEntry = (WeightT, T) // (priority, entry)
 }

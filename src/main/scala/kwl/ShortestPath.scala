@@ -2,12 +2,13 @@ package kwl
 
 import scala.math.min
 import Graph.NodeId
+import kwl.utils.SimpleUpdatableMinQueue
 
 trait ShortestPathAlg {
   /**
    * @return length of the shortest path or -1 if it don't exist
    */
-  def shortestPath(g: Graph, src: NodeId, to: NodeId): Int
+  def shortestPath(g: Graph, src: NodeId, to: NodeId): Long
 
   val NO_PATH = -1
 }
@@ -17,22 +18,27 @@ trait ShortestPathAlg {
  * based on a Priority Queue
  */
 object DijkstraShortestPath extends ShortestPathAlg {
-  def shortestPath(g: Graph, src: NodeId, to: NodeId): Int = {
-    val dists = collection.mutable.Map[NodeId, Int]()
+  def shortestPath(g: Graph, src: NodeId, dest: NodeId): Long = {
+    val dists = collection.mutable.Map[NodeId, Long]()
     val visited = collection.mutable.Set[NodeId]()
     val q = new SimpleUpdatableMinQueue[NodeId]()
 
     // enqueue the edges directly reachable from src
-    for (edge <- g.edgesMap(src)) {
+    for (edge <- g.outEdges(src)) {
       q += ((edge.dist, edge.to))
       dists(edge.to) = edge.dist
     }
 
     while (!q.isEmpty) {
-      val (cur_dist, from) = q.popMin()
-      visited += from
+      val (cur_dist, current) = q.popMin()
+      visited += current
 
-      for (Edge(_, v, edge_dist) <- g.edgesMap(from) if !visited.contains(v)) {
+      if (current == dest) {
+        // we reach the destination, so we can terminate here
+        return cur_dist
+      }
+
+      for (Edge(_, v, edge_dist) <- g.outEdges(current) if !visited.contains(v)) {
         val new_dist = cur_dist + edge_dist
         // if new dist is better, enqueue it or update its priority
         if (!dists.isDefinedAt(v) || new_dist < dists(v)) {
@@ -41,19 +47,19 @@ object DijkstraShortestPath extends ShortestPathAlg {
         }
       }
     }
-    dists.get(to) getOrElse NO_PATH
+    dists.get(dest) getOrElse NO_PATH
   }
 }
 
 /**
  * Even simpler implementation of Floyd-Warshall algorithm
  */
-object AllShortestPaths extends ShortestPathAlg {
-  val inf: Int = Int.MaxValue / 5
-  // use a value low enough to avoid overflows
-  type DistsArray = Array[Array[Int]]
+object FloydWarshall extends ShortestPathAlg {
+  // TODO: WTF: use a value low enough to avoid overflows
+  val inf: Long = Int.MaxValue.toLong
+  type DistsArray = Array[Array[Long]]
 
-  def shortestPath(g: Graph, src: NodeId, to: NodeId): Int =
+  def shortestPath(g: Graph, src: NodeId, to: NodeId): Long =
     extractDist(g, allShortestPaths(g), src, to)
 
   /**
@@ -61,7 +67,7 @@ object AllShortestPaths extends ShortestPathAlg {
    */
   def allShortestPaths(g: Graph): DistsArray = {
     val n = g.nodesList.size
-    val dists = Array.fill[Int](n, n)(inf)
+    val dists = Array.fill[Long](n, n)(inf)
 
     // init with direct edge distances
     for ((i, j, d) <- g.edgesNumeric) {
@@ -75,8 +81,8 @@ object AllShortestPaths extends ShortestPathAlg {
     dists
   }
 
-  def extractDist(g: Graph, dist: DistsArray, src: NodeId, to: NodeId): Int = {
-    val d = dist(g.node_id_num(src))(g.node_id_num(to))
+  def extractDist(g: Graph, dist: DistsArray, src: NodeId, to: NodeId): Long = {
+    val d = dist(g.nodeNum(src))(g.nodeNum(to))
     if (d == inf) NO_PATH else d
   }
 

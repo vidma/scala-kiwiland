@@ -4,15 +4,15 @@
 package kwl
 
 import Graph.{NodeId, createGraph}
-import kwl.TripsCounter.CounterTypeEnum.{MAX_DIST, MAX_STOPS, EXACT_STOPS}
+import kwl.TripsCounter.{MaxDistCond, MaxEdgeNumCond, ExactEdgeNumCond}
 
-abstract class KwlBase(val g: Graph)
+abstract class KiwilandBase(val g: Graph)
 
-class Kiwiland(override val g: Graph) extends KwlBase(g) with RouteDist with KwlTripsCounter {
+class Kiwiland(override val g: Graph) extends KiwilandBase(g) with RouteDist with KwlTripsCounterDynProg {
   /**
    * get Distance of the shortest path
    */
-  def shortestPath(from: NodeId, to: NodeId): Int =
+  def shortestPath(from: NodeId, to: NodeId): Long =
     DijkstraShortestPath.shortestPath(g, from, to)
 
   /*
@@ -22,7 +22,7 @@ class Kiwiland(override val g: Graph) extends KwlBase(g) with RouteDist with Kwl
     def routeDistOrMsg(s: String)
 
    * The following methods are inherited from KwlTripsCounter:
-    def countTrips(counter_type: CType, from: NodeId, to: NodeId, max_stops: Int, max_dist: Int = 0): Int
+    def countTrips(counter_type: Counter, from: NodeId, to: NodeId, max_dist: Int): Int
   */
 
 }
@@ -45,11 +45,11 @@ object Kiwiland {
       kwl.routeDist("ADC"),
       kwl.routeDist("AEBCD"),
       kwl.routeDistOrMsg("AED"),
-      kwl.countTrips(MAX_STOPS, 'C', 'C', 3),
-      kwl.countTrips(EXACT_STOPS, 'A', 'C', 4),
+      kwl.countTrips('C', 'C', MaxEdgeNumCond(3)),
+      kwl.countTrips('A', 'C', ExactEdgeNumCond(4)),
       kwl.shortestPath('A', 'C'),
       kwl.shortestPath('B', 'B'),
-      kwl.countTrips(MAX_DIST, 'C', 'C', 0, 30)
+      kwl.countTrips('C', 'C', MaxDistCond(30))
     )
 
     println(results mkString "\n")

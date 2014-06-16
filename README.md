@@ -5,6 +5,8 @@ Sbt will take care of all the dependencies, will compile and allow running the c
   
 When you run any ```sbt``` command, it  will automatically recompile the modified code if needed.
 
+P.S. Recomended sbt version: 0.12.2+ or 0.13.x (and Scala 2.10.x is needed).
+
 Running the tests and code-checks
 ----------------------------
 ```bash
@@ -26,8 +28,7 @@ The Main code is in [src/main/scala/kwl/](src/main/scala/kwl/) containing the fo
  * ```Graph``` - a simple adjacency-list based graph
  * ```RouteDist``` - simply calculates the distance of a given route
  * ```ShortestPath``` - implements 1) Floyd-Warshall and 2) Dijkstra based on min-queue
- * ```TripsCounter``` - a basic recursive counter of different routes available 
-     (two versions, one with dynamic-programing-like result caching/memo that guarantees polynomic running time)
+ * ```TripsCounter``` - a simple recursive distinct route counter decorated with result caching/memo that guarantees polynomic running time (two versions: one of dynamic-programing nature, second purely recursive)
  * ```utils/```
    - ```utils/SimpleUpdatableMinQueue``` - basic updatable min-queue on top of scala's Scala's HashSet
      * *Note: for better performance an adapted minHeap shall be used, which would keep track of the physical location of each entry in the heap*

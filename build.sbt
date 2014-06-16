@@ -5,11 +5,10 @@ version := "1.0.0"
 //scalaVersion := "2.10.2"
 //scalaVersion := "2.10.0"
 
-scalaVersion := "2.10.3"
+scalaVersion := "2.10.2"
 
-scalacOptions ++= Seq("-deprecation" )
+scalacOptions ++= Seq("-deprecation", "-feature")
 
-//"-feature"
 
 //ScoverageSbtPlugin.instrumentSettings
 

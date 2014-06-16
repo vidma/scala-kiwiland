@@ -4,11 +4,11 @@ import scala.math.min
 import Graph.NodeId
 import kwl.utils.SimpleUpdatableMinQueue
 
-trait ShortestPathAlg {
+trait ShortestPathAlg extends KiwilandBase {
   /**
    * @return length of the shortest path or -1 if it don't exist
    */
-  def shortestPath(g: Graph, src: NodeId, to: NodeId): Long
+  def shortestPath(src: NodeId, to: NodeId): Long
 
   val NO_PATH = -1
 }
@@ -17,8 +17,8 @@ trait ShortestPathAlg {
  * A basic implementation  of Dijkstra's Shortest Path algorithm
  * based on a Priority Queue
  */
-object DijkstraShortestPath extends ShortestPathAlg {
-  def shortestPath(g: Graph, src: NodeId, dest: NodeId): Long = {
+trait DijkstraShortestPath extends ShortestPathAlg {
+  def shortestPath(src: NodeId, dest: NodeId): Long = {
     val dists = collection.mutable.Map[NodeId, Long]()
     val visited = collection.mutable.Set[NodeId]()
     val q = new SimpleUpdatableMinQueue[NodeId]()
@@ -51,21 +51,25 @@ object DijkstraShortestPath extends ShortestPathAlg {
   }
 }
 
+object DijkstraShortestPath {
+  def apply(g: Graph) = new KiwilandBase(g) with DijkstraShortestPath
+}
+
 /**
  * Even simpler implementation of Floyd-Warshall algorithm
  */
-object FloydWarshall extends ShortestPathAlg {
+trait FloydWarshall extends ShortestPathAlg {
   // TODO: WTF: use a value low enough to avoid overflows
-  val inf: Long = Int.MaxValue.toLong
+  protected val inf: Long = Int.MaxValue.toLong
   type DistsArray = Array[Array[Long]]
 
-  def shortestPath(g: Graph, src: NodeId, to: NodeId): Long =
-    extractDist(g, allShortestPaths(g), src, to)
+  def shortestPath(src: NodeId, to: NodeId): Long =
+    extractDist(allShortestPaths(), src, to)
 
   /**
    * @return array dist(from)(to) containing all shortest paths
    */
-  def allShortestPaths(g: Graph): DistsArray = {
+  def allShortestPaths(): DistsArray = {
     val n = g.nodesList.size
     val dists = Array.fill[Long](n, n)(inf)
 
@@ -81,9 +85,13 @@ object FloydWarshall extends ShortestPathAlg {
     dists
   }
 
-  def extractDist(g: Graph, dist: DistsArray, src: NodeId, to: NodeId): Long = {
+  def extractDist(dist: DistsArray, src: NodeId, to: NodeId): Long = {
     val d = dist(g.nodeNum(src))(g.nodeNum(to))
     if (d == inf) NO_PATH else d
   }
 
+}
+
+object FloydWarshall {
+  def apply(g: Graph) = new KiwilandBase(g) with FloydWarshall
 }

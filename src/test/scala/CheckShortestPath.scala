@@ -2,9 +2,7 @@ import org.scalacheck.Properties
 import org.scalacheck.Prop.forAll
 import org.scalacheck.Prop._
 
-import kwl.FloydWarshall.{extractDist, allShortestPaths}
-import kwl.DijkstraShortestPath
-import kwl.Graph
+import kwl.{FloydWarshall, DijkstraShortestPath, Graph}
 import GraphGenerator.arbGraph
 
 
@@ -19,9 +17,13 @@ object CheckShortestPath extends Properties("ShortestPath") {
 
   val propDijkstraFloydMatches = forAll { (g: Graph) =>
     var ok = true
-    val dists = allShortestPaths(g) // by Floyd-Warshal
+
+    val floyd = FloydWarshall(g)
+    val dijkstra = DijkstraShortestPath(g)
+    val dists = floyd.allShortestPaths() // by Floyd-Warshal
+
     for (src <- g.nodesList; to <- g.nodesList) {
-      val fail = extractDist(g, dists, src, to) != DijkstraShortestPath.shortestPath(g, src, to)
+      val fail = floyd.extractDist(dists, src, to) != dijkstra.shortestPath(src, to)
       if (fail) {
         println("Dijkstra do not match Floyd-Warshal", src, to, g)
         ok = false

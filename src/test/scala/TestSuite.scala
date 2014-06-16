@@ -77,13 +77,13 @@ class TestSuite extends FunSuite with Checkers {
 
   test("test 8: with floyd Warshall") {
     assertResult(9) {
-      FloydWarshall.shortestPath(kwl.g, 'A', 'C')
+      FloydWarshall(kwl.g).shortestPath('A', 'C')
     }
   }
 
   test("test 9: with floyd Warshall") {
     assertResult(9) {
-      FloydWarshall.shortestPath(kwl.g, 'B', 'B')
+      FloydWarshall(kwl.g).shortestPath('B', 'B')
     }
   }
 

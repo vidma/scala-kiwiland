@@ -27,7 +27,7 @@ The Main code is in [src/main/scala/kwl/](src/main/scala/kwl/) containing the fo
  * ```RouteDist``` - simply calculates the distance of a given route
  * ```ShortestPath``` - implements 1) Floyd-Warshall and 2) Dijkstra based on min-queue
  * ```TripsCounter``` - a basic recursive counter of different routes available 
-     (two versions, one with dynamic-programing-like result caching/memo)
+     (two versions, one with dynamic-programing-like result caching/memo that guarantees polynomic running time)
  * ```utils/```
    - ```utils/SimpleUpdatableMinQueue``` - basic updatable min-queue on top of scala's Scala's HashSet
      * *Note: for better performance an adapted minHeap shall be used, which would keep track of the physical location of each entry in the heap*

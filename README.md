@@ -20,7 +20,7 @@ sbt scalastyle
 
 Code Structure
 ----------------------------
-The Main code is in [src/main/scala](src/main/scala/) containing the following files:
+The Main code is in [src/main/scala/kwl/](src/main/scala/kwl/) containing the following files:
 
  * ```Kiwiland``` - the entry point (which mixes in the functionality below)
  * ```Graph``` - a simple adjacency-list based graph
@@ -34,7 +34,7 @@ The Main code is in [src/main/scala](src/main/scala/) containing the following f
 
 Tests
 ----------------------------
-The tests are contained in src/test/scala:
+The tests are contained in [src/test/scala/](src/test/scala/):
  
  * ```TestSuite``` contains the unit tests based on:
      - sample output from the assignment

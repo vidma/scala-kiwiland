@@ -32,7 +32,7 @@ class SimpleUpdatableMinQueue[T] extends collection.mutable.HashSet[(WeightT, T)
 
   def updatePriority(new_weight: WeightT, entry: T): Unit = {
     this.retain(_._2 != entry) // remove the element if exists, TODO: this lookup could be faster
-    this += ((new_weight, entry))
+    this += (new_weight -> entry)
   }
 }
 

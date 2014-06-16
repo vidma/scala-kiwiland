@@ -8,15 +8,17 @@ import kwl.utils.Memo._
 
 
 /**
- * If cycles are allowed, dynamic programming may be useful [1]
+ * From the first sight it might look that exhaustive enumeration of all
+ * possible paths could be the only feasible solution. Happily, if cycles in
+ * resulting paths are allowed (and they are), dynamic programming may be used [1],
+ * which would guarantee polynomic runtime (at the expense of a small additional storage).
  *
- * "If we allow paths to reuse vertices then there is a dynamic programming solution to find the number of paths from s to t with n edges."
+ * It shall be noted that there are two related problems whereas each require different solutions:
+ * - while, on acyclic graphs solution is really simple: count paths while walking in a topological order [3, 4]
+ * - finding # of simple paths (i.e. acyclic) in a cyclic graph is P-complete [1-2,5], thus, approximations are sometimes preferred.
  *
- * Related Variations on the problem:
- * - on cyclic graph finding # of acyclic paths (i.e. simple paths) is P-complete [1-2,5]
- * - on acyclic graph - basically walking in topological order and counting paths [3, 4]
  *
- * Related resources:
+ * Resources:
  * [1] http://cs.stackexchange.com/questions/423/how-hard-is-counting-the-number-of-simple-paths-between-two-nodes-in-a-directed
  * [2] http://stackoverflow.com/questions/5569256/fast-algorithm-for-counting-the-number-of-acyclic-paths-on-a-directed-graph
  * [3] http://web.eecs.utk.edu/courses/fall2011/cs302/Notes/Topological/  [see very bottom]
@@ -24,6 +26,9 @@ import kwl.utils.Memo._
  * [5] http://www.maths.uq.edu.au/~kroese/ps/robkro_rev.pdf
  */
 
+trait KwlTripsCounter extends KiwilandBase {
+  def countTrips(src: NodeId, dest: NodeId, cond: CounterCond): Int
+}
 
 /**
  * The following solution is based on an observation that
@@ -35,7 +40,7 @@ import kwl.utils.Memo._
  *
  * TODO: get rid of recursion to support much larger graphs
  */
-trait KwlTripsCounterDynProg extends KiwilandBase {
+trait KwlTripsCounterDynProg extends KwlTripsCounter {
 
   def countTrips(src: NodeId, dest: NodeId, cond: CounterCond): Int = {
     /** recursive helper: nPaths(s, dist) => Int:
@@ -115,7 +120,7 @@ object TripsCounter {
  * adding additional CounterCond classes allows to easily
  * change the behavior of this counter.
  * */
- trait KwlTripsCounterRecursive extends KiwilandBase {
+ trait KwlTripsCounterRecursive extends KwlTripsCounter {
 
   def countTrips(src: NodeId, dest: NodeId, cond: CounterCond): Int = {
     val searchGuard = cond.searchGuard _

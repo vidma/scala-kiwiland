@@ -70,7 +70,7 @@ trait FloydWarshall extends ShortestPathAlg {
    * @return array dist(from)(to) containing all shortest paths
    */
   def allShortestPaths(): DistsArray = {
-    val n = g.nodesList.size
+    val n = g.nNodes
     val dists = Array.fill[Long](n, n)(inf)
 
     // init with direct edge distances
@@ -82,6 +82,7 @@ trait FloydWarshall extends ShortestPathAlg {
     for (k <- 0 until n; i <- 0 until n; j <- 0 until n) {
       dists(i)(j) = min(dists(i)(j), dists(i)(k) + dists(k)(j))
     }
+
     dists
   }
 

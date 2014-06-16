@@ -3,18 +3,16 @@
  */
 package kwl
 
-import Graph.{NodeId, createGraph}
+import Graph.createGraph
 import kwl.TripsCounter.{MaxDistCond, MaxEdgeNumCond, ExactEdgeNumCond}
 
 abstract class KiwilandBase(val g: Graph)
 
-class Kiwiland(override val g: Graph) extends KiwilandBase(g)
-  with RouteDist with KwlTripsCounterDynProg with DijkstraShortestPath {
-  /**
-   * get Distance of the shortest path
-   */
-  //def shortestPath(from: NodeId, to: NodeId): Long =
-  //  DijkstraShortestPath.shortestPath(g, from, to)
+class Kiwiland(override val g: Graph)
+  extends KiwilandBase(g)
+  with RouteDist
+  with KwlTripsCounterDynProg
+  with DijkstraShortestPath {
 
   /*
    * The following methods are inherited from RouteDist:
@@ -24,6 +22,9 @@ class Kiwiland(override val g: Graph) extends KiwilandBase(g)
 
    * The following methods are inherited from KwlTripsCounter:
     def countTrips(counter_type: Counter, from: NodeId, to: NodeId, max_dist: Int): Int
+
+   * The following is inherited from DijkstraShortestPath:
+    def shortestPath(from: NodeId, to: NodeId): Long
   */
 
 }

@@ -26,7 +26,8 @@ The Main code is in [src/main/scala/kwl/](src/main/scala/kwl/) containing the fo
  * ```Graph``` - a simple adjacency-list based graph
  * ```RouteDist``` - simply calculates the distance of a given route
  * ```ShortestPath``` - implements 1) Floyd-Warshall and 2) Dijkstra based on min-queue
- * ```TripsCounter``` - a basic recursive counter of different routes available
+ * ```TripsCounter``` - a basic recursive counter of different routes available 
+     (two versions, one with dynamic-programing-like result caching/memo)
  * ```utils/```
    - ```utils/SimpleUpdatableMinQueue``` - basic updatable min-queue on top of scala's Scala's HashSet
      * *Note: for better performance an adapted minHeap shall be used, which would keep track of the physical location of each entry in the heap*
@@ -41,7 +42,8 @@ The tests are contained in [src/test/scala/](src/test/scala/):
      - running a large number of randomized tests based on arbitrary inputs generated with help of the [ScalaCheck](www.scalacheck.org) lib (details below)
  * ```CheckShortestPath`` - for a number of arbitrary graphs, ensures that results by the two Shortest-Path algorithms are the same for all pairs of nodes  
  * ```GraphGenerator``` - generates random arbitrary graphs
- * ```CheckUpdatableMinQueue``` - generates random priority queues and checks that findMin and updatePriority methods work correctly 
+ * ```CheckUpdatableMinQueue``` - generates random priority queues and checks that findMin and updatePriority methods work correctly
+ * ```CheckTripsCounter``` - for each random graph check that the results of different implementations match
 
 Note: in a more serious project, additionally, code coverage should be checked, e.g. with sbt-scoverage. 
-Anyway, it seems these sbt plugins might be slightly outdated in the repositories and are not easily resolved by sbt.   
+Anyway, it seems these sbt plugins might be slightly outdated in the repositories and are not easily resolved by sbt.

@@ -1,3 +1,4 @@
+import org.scalacheck.Properties
 import org.scalatest.FunSuite
 import org.scalatest.prop.Checkers
 
@@ -12,6 +13,18 @@ import TripsCounter._
 class TestSuite extends FunSuite with Checkers {
   val testInput = "AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7"
   val kwl = Kiwiland(testInput)
+
+  /**
+   * run scalacheck for provided properties class - this provide
+   * much better & more detailed report than just running check(p.propertyName)
+    */
+  def runScalaCheck(p: Properties) = {
+    val args = List( "-minSuccessfulTests", "500").toArray
+    assertResult(0) {
+      p.mainRunner(args)
+    }
+  }
+
 
   test("test 1-4") {
     assert(kwl.routeDist("ABC") == 9)
@@ -63,18 +76,6 @@ class TestSuite extends FunSuite with Checkers {
     }
   }
 
-  test("run ScalaCheck: propFindMinSorted") {
-    check(CheckUpdatableMinQueue.propFindMinSorted)
-  }
-
-  test("run ScalaCheck: propUpdateWorks") {
-    check(CheckUpdatableMinQueue.propUpdateWorks)
-  }
-
-  test("run ScalaCheck: Dijkstra and Floyd-Warshall Matches?") {
-    check(CheckShortestPath.propDijkstraFloydMatches)
-  }
-
   test("test 8: with floyd Warshall") {
     assertResult(9) {
       FloydWarshall(kwl.g).shortestPath('A', 'C')
@@ -87,8 +88,16 @@ class TestSuite extends FunSuite with Checkers {
     }
   }
 
-  test("TripsCounter: DP vs complete recursion") {
-    check(CheckTripsCounter.propRecursionMatchesDynProg)
+  test("ScalaCheck: DP vs complete recursion") {
+    runScalaCheck(CheckTripsCounter)
+  }
+
+  test("ScalaCheck: CheckUpdatableMinQueue") {
+    runScalaCheck(CheckUpdatableMinQueue)
+  }
+
+  test("ScalaCheck: Dijkstra and Floyd-Warshall Matches?") {
+    runScalaCheck(CheckShortestPath)
   }
 
 }

@@ -1,5 +1,5 @@
-import kwl.Graph.{WeightedEdgeTup, NodeId, createGraph}
-import kwl.Graph
+import kwl.Graph.NodeId
+import kwl.{Graph, Edge}
 import org.scalacheck.Gen._
 import org.scalacheck.{Arbitrary, Gen}
 
@@ -7,22 +7,21 @@ import org.scalacheck.{Arbitrary, Gen}
  * Generator of Arbitrary Graphs
  */
 object GraphGenerator {
-  // type of edgeID
-  type EdgeT = (NodeId, NodeId)
-  val noEdges = Set[EdgeT]()
+  type UnweightedEdge = (NodeId, NodeId)
+  val noEdges = Set[UnweightedEdge]()
 
-  def getSmallPosNum = choose[Int](1, 1000).sample getOrElse 1
-
-  /** make a weighted edge from unweighted by adding a random distance */
-  def makeWeightedEdge(e: EdgeT): WeightedEdgeTup = (e._1, e._2, getSmallPosNum)
+  /** create a graph from edge definitions and weights */
+  def createGraph(edges: List[UnweightedEdge], weights: List[Int]): Graph =
+    Graph(edges zip weights map { case ((from, to), dist) => Edge(from, to, dist) } )
 
   /** generate an arbitrary Graph */
   def genGraph: Gen[Graph] = for {
-    edges_simple <- genNonWeightedEdges
-  } yield createGraph(edges_simple.toList map makeWeightedEdge)
+    edges <- genNonWeightedEdges
+    weights <- listOfN(edges.size, choose[Int](1, 1000))
+  } yield createGraph(edges.toList, weights) // add a weight to each edge
 
   /** generates arbitrary unique set of unweighted edges without self-arcs */
-  def genNonWeightedEdges: Gen[Set[EdgeT]] = for {
+  def genNonWeightedEdges: Gen[Set[UnweightedEdge]] = for {
     n1 <- choose[Char]('A', 'Z')
     n2 <- choose[Char]('A', 'Z') if n1 != n2
     g <- oneOf(value(noEdges), genNonWeightedEdges)

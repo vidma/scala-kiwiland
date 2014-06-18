@@ -15,38 +15,46 @@ sbt run
 
 # run the tests (sample output from assignment and randomized scalacheck tests)
 sbt test
-
-# stylecheck
-sbt scalastyle
 ```
 
 Code Structure
 ----------------------------
-The Main code is in [src/main/scala/kwl/](src/main/scala/kwl/) containing the following files:
+The Main code is in [src/main/scala/kwl/](src/main/scala/kwl/) containing the files described below. 
+The design decisions are briefed next to each class/file name, with more details in the code.
+Generally, simplicity is preferred over performance (unless explicitly needed).
 
- * ```Kiwiland``` - the entry point (which mixes in the functionality below)
- * ```Graph``` - a simple adjacency-list based graph
+ * ```Kiwiland``` - the entry point (which mixes in the other functionality)
+ * ```Graph``` - a simple graph that, in addition to flat adjacency-list, provides a couple of other
+  lazily calculated representations each suited for different use cases, e.g. 
+  dict of adjacency lists by out-vertex, adjacency matrix, renaming of vertices into numbered ones etc 
  * ```RouteDist``` - simply calculates the distance of a given route
  * ```ShortestPath``` - implements 1) Floyd-Warshall and 2) Dijkstra based on min-queue
- * ```TripsCounter``` - a simple recursive distinct route counter decorated with result caching/memo that guarantees polynomic running time (two versions: one of dynamic-programing nature, second purely recursive)
+ * ```TripsCounter``` - a recursive counter of distinct routes of dynamic-programing nature. 
+   it is decorated with result caching/memo that guarantees polynomic running time 
+   (there is also a second purely recursive implementation)
  * ```utils/```
    - ```utils/SimpleUpdatableMinQueue``` - basic updatable min-queue on top of scala's Scala's HashSet
      * *Note: for better performance an adapted minHeap shall be used, which would keep track of the physical location of each entry in the heap*
    - ```utils/Memo``` - a basic generic Memo "decorator" (7 lines of beautiful external code)     
 
+
 Tests
-----------------------------
+=============================
 The tests are contained in [src/test/scala/](src/test/scala/):
  
  * ```TestSuite``` contains the unit tests based on:
      - sample output from the assignment
-     - running a large number of randomized tests based on arbitrary inputs generated with help of the [ScalaCheck](www.scalacheck.org) lib (details below)
- * ```CheckShortestPath`` - for a number of arbitrary graphs, ensures that results by the two Shortest-Path algorithms are the same for all pairs of nodes  
+     - running a large number of randomized tests based on arbitrary inputs generated with help of 
+     the [ScalaCheck](www.scalacheck.org) lib (details below)
+ * ```CheckShortestPath`` - for a number of arbitrary graphs, ensures that results by the two 
+   Shortest-Path algorithms are the same for all pairs of nodes  
  * ```GraphGenerator``` - generates random arbitrary graphs
- * ```CheckUpdatableMinQueue``` - generates random priority queues and checks that findMin and updatePriority methods work correctly
- * ```CheckTripsCounter``` - for each random graph check that the results of different implementations match
-
-Note: in a more serious project, additionally, code coverage should be checked, e.g. with sbt-scoverage. 
-Anyway, it seems these sbt plugins might be slightly outdated in the repositories and are not easily resolved by sbt.
+ * ```CheckUpdatableMinQueue``` - generates random priority queues and checks that findMin and 
+   updatePriority methods work correctly
+ * ```CheckTripsCounter``` - for a number of random graphs check that the results of the two different implementations match
 
 Test results can be seen here: [![Build Status](https://travis-ci.org/vidma/scala-kiwiland.svg?branch=master)](https://travis-ci.org/vidma/scala-kiwiland)
+
+Note: a more serious project, might additionally require: 
+- more thorough testing (including more tests, checking the code coverage, e.g. with sbt-scoverage).
+- performance improvements and profiling (some are described) 

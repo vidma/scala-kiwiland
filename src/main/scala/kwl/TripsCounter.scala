@@ -8,48 +8,43 @@ import kwl.utils.Memo._
 
 
 /**
- * From the first sight it might look that exhaustive enumeration of all
- * possible paths could be the only feasible solution. Happily, if cycles in
- * resulting paths are allowed (and they are), dynamic programming may be used [1],
- * which would guarantee polynomic runtime (at the expense of a small additional storage).
+ * At first sight it might look that bruteforce enumeration of all possible paths could be the only
+ * feasible solution. Happily, if cycles in the paths are allowed (and they are), dynamic programming
+ * comes to help, based on an observation that the # of different sub-routes from s to dest (s -> dest)
+ * depend only on (s, dest, dist) independently of any steps taken earlier. This guarantees
+ * polynomial runtime (at the expense of a small additional storage).
  *
- * It shall be noted that there are two related problems whereas each require different solutions:
- * - while, on acyclic graphs solution is really simple: count paths while walking in a topological order [3, 4]
- * - finding # of simple paths (i.e. acyclic) in a cyclic graph is P-complete [1-2,5], thus, approximations are sometimes preferred.
+ * Note that there are two related problems: first, on acyclic graphs the solution is really simple:
+ * count paths while walking in a topological order [3, 4]. On the other hand, finding # of simple
+ * paths (i.e. acyclic) in a cyclic graph is P-complete [1-2,5], where, approximations are sometimes
+ * preferred.
  *
+ * Below is a simple recursive solution covering the Dynamic Programing idea via caching/memento.
+ *
+ * Its complexity shall be ~ O(|N| * |E| * |Dist|) and uses storage of O(N Dist).
+ * This might be theoretically improved by organizing the computations in other way, but certainly is
+ * better than the naive bruteforce.
+ *
+ * TODO: get rid of recursion to support much larger graphs
  *
  * Resources:
  * [1] http://cs.stackexchange.com/questions/423/how-hard-is-counting-the-number-of-simple-paths-between-two-nodes-in-a-directed
  * [2] http://stackoverflow.com/questions/5569256/fast-algorithm-for-counting-the-number-of-acyclic-paths-on-a-directed-graph
  * [3] http://web.eecs.utk.edu/courses/fall2011/cs302/Notes/Topological/  [see very bottom]
  * [4] http://anorwell.com/index.php?id=51
- * [5] http://www.maths.uq.edu.au/~kroese/ps/robkro_rev.pdf
+ * [5] http://www.maths.uq.edu.au/~kroese/ps/robkro_rev.pdf*
  */
+trait KwlTripsCounterDynProg extends KiwilandBase {
 
-trait KwlTripsCounter extends KiwilandBase {
-  def countTrips(src: NodeId, dest: NodeId, cond: CounterCond): Int
-}
-
-/**
- * The following solution is based on an observation that
- * if cycles are allowed, the count of different sub-routes continuing at s
- * depend only on (s, dest, dist) independently of any steps taken earlier.
- *
- * Thus, the complexity shall be ~ O(|N| * |E| * |Dist|) and uses storage of O(N Dist).
- * This might be theoretically improved by organizing the computations in other way?
- *
- * TODO: get rid of recursion to support much larger graphs
- */
-trait KwlTripsCounterDynProg extends KwlTripsCounter {
-
-  def countTrips(src: NodeId, dest: NodeId, cond: CounterCond): Int = {
+  def countTrips(src: NodeId, dest: NodeId, cond: CounterCond): Long = {
     /** recursive helper: nPaths(s, dist) => Int:
       * recursively calculate # of routes from "s" to "dest" with length exactly of "dist"
       * results are memoized in "Dynamic Programming" cache, i.e. Map[(s, dist)-> Int]
       */
-    lazy val nPaths: (NodeId, Int) ==> Int = Memo {
+    lazy val nPaths: (NodeId, Long) ==> Long = Memo {
       // reached destination?
       case (`dest`, 0) => 1
+
       // otherwise, count # of distinct paths to "dest" via adjacent vertices
       case (s, dist) =>
         // get either weighted or unweighted outgoing edges depending on search condition
@@ -82,67 +77,61 @@ object TripsCounter {
     // this stores either max # of edges or max distance
     val max_dist: Int
 
-    // used in recursive (on DP) solution only
-    def searchGuard(stops_used: Int, dist: Int, destReached: Boolean): Boolean
+    // Note: used only in KwlTripsCounterRecursive (not in KwlTripsCounterDynProg)
+    val searchGuard, reachedGuard = (stops: Int, dist: Int) => stops <= max_dist
   }
 
   case class MaxEdgeNumCond(max_dist: Int) extends CounterCond {
     // when we limit the edge count, we just map distances into 1
     val distToUse = (d: Int) => 1
-
-    def searchGuard(stops_used: Int, dist: Int, destReached: Boolean): Boolean =
-      stops_used <= max_dist
+    // inherit: searchGuard, reachedGuard => stops <= max_dist
   }
 
   case class ExactEdgeNumCond(max_dist: Int) extends CounterCond {
     // when we limit the edge count, we just map distances into 1
     val distToUse = (d: Int) => 1
 
-    def searchGuard(stops_used: Int, dist: Int, destReached: Boolean): Boolean =
-      if (destReached) { stops_used == max_dist }
-      else { stops_used <= max_dist }
+    // inherit searchGuard = stops <= max_dist
+    override val reachedGuard = (stops: Int, dist: Int) => stops == max_dist
   }
 
   case class MaxDistCond(max_dist: Int) extends CounterCond {
     // here we limit of the edge weights/distances, so original edge dists are used
     override val distToUse = (d: Int) => d
 
-    def searchGuard(stops_used: Int, dist: Int, destReached: Boolean): Boolean =
-      dist < max_dist
+    override val searchGuard, reachedGuard = (stops: Int, dist: Int) => dist < max_dist
   }
 
 }
 
 
 /**
- *  Different implementation of even simpler recursive solution.
+ *  A Different implementation of even simpler recursive solution.
  *
  * adding additional CounterCond classes allows to easily
  * change the behavior of this counter.
  * */
- trait KwlTripsCounterRecursive extends KwlTripsCounter {
+trait KwlTripsCounterRecursive extends KiwilandBase {
 
-  def countTrips(src: NodeId, dest: NodeId, cond: CounterCond): Int = {
-    val searchGuard = cond.searchGuard _
-
+  def countTrips(src: NodeId, dest: NodeId, cond: CounterCond): Long = {
     // inner recursive helper
-    def getCount(current: NodeId, stops_used: Int, total_dist: Int): Int = {
-      var count = 0
-      if (searchGuard(stops_used, total_dist, false)) {
+    def getCount(current: NodeId, stops_used: Int, total_dist: Int): Long = {
+      var count: Long = 0
         // Loop over all adjacent edges
         for (Edge(_, edge_to, edge_dist) <- g.outEdges(current)) {
           val new_dist = total_dist + edge_dist
           // check if the final destination is reached in the required way
-          if (dest == edge_to && searchGuard(stops_used + 1, new_dist, true)) {
+          if (dest == edge_to && cond.reachedGuard(stops_used + 1, new_dist)) {
             count += 1
           }
           // any longer paths?
-          count += getCount(edge_to, stops_used + 1, new_dist)
+          if (cond.searchGuard(stops_used+1, new_dist)) {
+            count += getCount(edge_to, stops_used + 1, new_dist)
+          }
         }
-      }
+
       count
     }
-
     // call the inner recursive function
     getCount(src, 0, 0)
   }

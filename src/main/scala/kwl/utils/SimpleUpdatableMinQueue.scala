@@ -1,7 +1,5 @@
 package kwl.utils
 
-import SimpleUpdatableMinQueue._
-
 /**
  * A basic Priority Queue with Updatable Priorities.
  *
@@ -15,29 +13,33 @@ import SimpleUpdatableMinQueue._
  *     * e.g. Array for low number of elements, or a HashTable for more fancy types  O(1)
  * - once found the required heap entry, modify it and shiftUp/down O(log n)
  */
-class SimpleUpdatableMinQueue[T] extends collection.mutable.HashSet[(WeightT, T)] {
-  type QueueEntry = (WeightT, T) // (priority, entry)
+class SimpleUpdatableMinQueue[K, V](implicit cmp: Ordering[K])
+extends collection.mutable.HashSet[(K, V)] {
+  type QItem = (K, V) // (key=priority, e.g. distance; value=entry, e.g. NodeID)
 
-  override def iterator: Iterator[QueueEntry] = new Iterator[QueueEntry] {
-    def hasNext: Boolean = !this.isEmpty
-
-    def next(): QueueEntry = popMin()
-  }
-
-  def popMin(): QueueEntry = {
-    val minElm = this.minBy(_._1)
+  def popMin(): QItem = {
+    val minElm = this.minBy(get_key)
     this -= minElm
     minElm
   }
 
-  def updatePriority(new_weight: WeightT, entry: T): Unit = {
-    this.retain(_._2 != entry) // remove the element if exists, TODO: this lookup could be faster
+  def updateKey(new_weight: K, entry: V): Unit = {
+    this.retain(_._2 != entry) // remove the element if exists
     this += (new_weight -> entry)
   }
+
+  override def iterator: Iterator[QItem] = new Iterator[QItem] {
+    def hasNext: Boolean = !this.isEmpty
+    def next(): QItem = popMin()
+  }
+
+  def get_key(e: QItem): K = e._1
+  def get_value(e: QItem): V = e._2
 }
 
 object SimpleUpdatableMinQueue {
-  type T = Char
-  type WeightT = Int
-  type QueueEntry = (WeightT, T) // (priority, entry)
+  // TODO: do something with this? move to graph?
+  type V = Char
+  type K = Long
+  type QItem = (K, V) // (priority, entry)
 }

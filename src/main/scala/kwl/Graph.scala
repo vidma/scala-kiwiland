@@ -1,9 +1,9 @@
 package kwl
 
-import Graph.{NodeId, EdgeTupleIdx}
+import Graph.NodeId
 
 case class Edge(from: NodeId, to: NodeId, dist: Int) {
-  override def toString: String = s"($from->$to: $dist)"
+  override def toString: String = s"$from$to$dist"
 }
 
 case class Node(id: NodeId, edgesOut: List[Edge])
@@ -11,11 +11,13 @@ case class Node(id: NodeId, edgesOut: List[Edge])
 /**
  * A graph structure based on adjacency-lists.
  *
- * it provides access to a couple of different graph representations:
- * - edgeMap, a dictionary of alphabetically named edges by grouped by outgoing node
+ * based on edgeList, initial flat list of edges (e.g. A B 7), this class provides
+ * a couple of graph representations (calculated lazily on demand):
  * - edgesNumeric, a flat list of edges named with numeric ids
- *     * the numeric id is the Node's index in the nodesList, and may be obtained via node_id_num
- * - adjacency matrix (0 if no edge else edge distance)
+ *    * the numeric id is the Node's index in the nodesList, and may be obtained via nodeNum
+ * - edgeMap, a dictionary of alphabetically named edges by grouped by outgoing node
+ * - adjMatrixDist, an adjacency matrix representation
+ * - nodesList - list of all node ids (e.g. A B C D ..)
  */
 class Graph(val edgesList: List[Edge]) {
   /** map of outgoing edges: a dictionary of alphabetically named edges, grouped by outgoing node */
@@ -33,20 +35,24 @@ class Graph(val edgesList: List[Edge]) {
   lazy val nodeNum = nodesList.zipWithIndex.toMap
 
   /** edgeList using numeric node ids */
-  lazy val edgesNumeric: List[EdgeTupleIdx] = edgesList map {
+  lazy val edgesNumeric: List[(Int, Int, Int)] = edgesList map {
     e => (nodeNum(e.from), nodeNum(e.to), e.dist) }
+
+  /** Adjacency Matrix: Map (from, to) => dist */
+  lazy val adjMatrixDist: Map[(NodeId, NodeId), Int] =
+    Map.empty ++ (edgesList map { case Edge(from, to, dist) => (from, to) -> dist })
+
+  override def toString: String = {
+    val edges = edgesList mkString ","
+    s"Graph($edges)"
+  }
 
 }
 
 object Graph {
   type NodeId = Char
-  type Route = List[NodeId]
-  type WeightedEdgeTup = (NodeId, NodeId, Int)
+  type DistT = Int // TODO: shall I use this instead?
   type RouteDistT = Long // TODO: use this constant everywhere?
-
-
-  /** a tuple representing an edge using numeric node ids */
-  type EdgeTupleIdx = (Int, Int, Int)
 
   /** main Graph "constructor" */
   def apply(edgeList: List[Edge]): Graph = new Graph(edgeList)
@@ -57,9 +63,5 @@ object Graph {
     yield Edge(from, to, Integer.parseInt(dist.toString))
     Graph(edges.toList)
   }
-
-  /** create a graph from edge definitions (tuples) */
-  def createGraph(edge_list: List[WeightedEdgeTup]): Graph =
-    Graph(edge_list map { case (from, to, dist) => Edge(from, to, dist) } )
 
 }

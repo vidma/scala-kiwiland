@@ -36,7 +36,7 @@ trait DijkstraShortestPath extends ShortestPathBase {
         dists(v) = better_dist
       }
     }
-    dists.get(dest) getOrElse NO_PATH_EXISTS
+    dists.getOrElse(dest, default=NO_PATH_EXISTS)
   }
 }
 

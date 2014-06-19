@@ -28,14 +28,16 @@ Generally, practicality & simplicity is preferred over performance (unless the t
   lazily calculated representations each suited for different use cases, e.g. 
   dict of adjacency lists by out-vertex, adjacency matrix, renaming of vertices into numbered ones etc 
  * ```RouteDist``` - simply calculates the distance of a given route
- * ```shortestpath``` package implements:
-    - Floyd-Warshall
-    - Dijkstra based on a simple min-queue (if need be, performance can be improved by using a 
+ * ```shortestpath``` package:
+    - ```FloydWarshall``` - super simple all-pairs-shortest path
+    - ```Dijkstra``` - based on a simple min-queue (if need be, performance can be improved by using a 
       better queue, e.g. a Heap queue with a decreaseKey)
- * ```TripsCounter``` - a recursive counter of distinct routes of dynamic-programing nature. 
-   it is decorated with result caching/memo that guarantees polynomic running time 
-    - there is also a second purely recursive implementation useful testing/validating the earlier
- * ```utils/```
+ * ```tripscounter``` package:
+    - ```TripsCounter``` - a recursive counter of distinct routes of dynamic-programing nature. 
+      It is decorated with result caching/memo that guarantees polynomic running time. 
+    - ```TripsCounterRecursive``` an alternative purely recursive implementation useful in 
+      testing/validating the earlier
+ * ```utils/``` package:
    - ```utils/SimpleUpdatableMinQueue``` - a simple updatable min-queue (if needbe, it could be 
    replaced by e.g. a MinHeap with decreaseKey)
    - ```utils/Memo``` - a basic generic Memento "decorator" (7 lines of beautiful external code)     

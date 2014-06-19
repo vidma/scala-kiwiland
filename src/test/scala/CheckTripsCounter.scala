@@ -1,9 +1,10 @@
+import kwl.tripscounter.{TripsCounterRecursive, TripsCounter}
 import org.scalacheck.Gen._
 import org.scalacheck.Properties
 import org.scalacheck.Prop.forAll
 
 import kwl._
-import kwl.TripsCounter._
+import TripsCounter._
 import GraphGenerator.arbGraph
 
 
@@ -16,8 +17,8 @@ import GraphGenerator.arbGraph
 object CheckTripsCounter extends Properties("TripsCounter") {
 
   property("RecursionMatchesDynProg") = forAll { (g: Graph) =>
-    val kwl_dp = new KiwilandBase(g) with KwlTripsCounterDynProg
-    val kwl_rec = new KiwilandBase(g) with KwlTripsCounterRecursive
+    val kwl_dp = new KiwilandBase(g) with TripsCounter
+    val kwl_rec = new KiwilandBase(g) with TripsCounterRecursive
     var ok = true
     for (src <- g.nodesList;
          dst <- g.nodesList;

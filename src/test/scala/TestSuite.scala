@@ -1,14 +1,13 @@
-import org.scalacheck.Properties
-import org.scalatest.FunSuite
-import org.scalatest.prop.Checkers
+import kwl.tripscounter.TripsCounter
+import TripsCounter._
+import kwl._
+import kwl.shortestpath.FloydWarshall
 
 import org.junit.runner.RunWith
+import org.scalacheck.Properties
+import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-import java.lang.Exception
-
-import kwl._
-import TripsCounter._
-import kwl.shortestpath.FloydWarshall
+import org.scalatest.prop.Checkers
 
 @RunWith(classOf[JUnitRunner])
 class TestSuite extends FunSuite with Checkers {
@@ -18,11 +17,11 @@ class TestSuite extends FunSuite with Checkers {
   /**
    * run scalacheck for provided properties class - this provide
    * much better & more detailed report than just running check(p.propertyName)
-    */
+   */
   def runScalaCheck(p: Properties) = {
-    val args = List( "-minSuccessfulTests", "500").toArray
+    val args = List("-minSuccessfulTests", "500")
     assertResult(0) {
-      p.mainRunner(args)
+      p.mainRunner(args.toArray)
     }
   }
 
@@ -41,58 +40,39 @@ class TestSuite extends FunSuite with Checkers {
   }
 
   test("test 5: error msg") {
-    assertResult(kwl.MsgNoRouteFound) {
-      kwl.routeDistOrMsg("AED")
-    }
+    assertResult(kwl.MsgNoRouteFound)(kwl.routeDistOrMsg("AED"))
   }
 
   test("test 6") {
-    assertResult(2) {
-      kwl.countTrips('C', 'C', MaxEdgeNumCond(3))
-
-    }
+    assertResult(2)(kwl.countTrips('C', 'C', MaxEdgeNumCond(3)))
   }
 
   test("test 7") {
-    assertResult(3) {
-      kwl.countTrips('A', 'C', ExactEdgeNumCond(4))
-    }
+    assertResult(3)(kwl.countTrips('A', 'C', ExactEdgeNumCond(4)))
   }
 
   test("test 8") {
-    assertResult(9) {
-      kwl.shortestPath('A', 'C')
-    }
+    assertResult(9)(kwl.shortestPath('A', 'C'))
   }
 
   test("test 9") {
-    assertResult(9) {
-      kwl.shortestPath('B', 'B')
-    }
+    assertResult(9)(kwl.shortestPath('B', 'B'))
   }
 
   test("new test: shortest path when no route exists") {
-    assertResult(kwl.NO_PATH_EXISTS) {
-      kwl.shortestPath('A', 'Z')
-    }
+    assertResult(kwl.NO_PATH_EXISTS)(kwl.shortestPath('A', 'Z'))
   }
 
   test("test 10") {
-    assertResult(7) {
-      kwl.countTrips('C', 'C', MaxDistCond(30))
-    }
+    assertResult(7)(kwl.countTrips('C', 'C', MaxDistCond(30)))
   }
 
   test("test 8: with floyd Warshall") {
-    assertResult(9) {
-      FloydWarshall(kwl.g).shortestPath('A', 'C')
-    }
+    assertResult(9)(FloydWarshall(kwl.g).shortestPath('A', 'C'))
   }
 
   test("test 9: with floyd Warshall") {
-    assertResult(9) {
-      FloydWarshall(kwl.g).shortestPath('B', 'B')
-    }
+    assertResult(9)(FloydWarshall(kwl.g).shortestPath('B', 'B'))
   }
 
   test("ScalaCheck: DP vs complete recursion") {

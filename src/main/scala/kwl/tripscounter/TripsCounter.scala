@@ -6,6 +6,8 @@ import kwl.utils.Memo.==>
 import kwl.{Edge, KiwilandBase}
 import kwl.tripscounter.TripsCounter._
 
+import scala.collection.mutable
+
 /**
  * At very first sight, it might look that the only feasible solution could be the
  * brute-force enumerating all possible paths. Happily, if cycles are allowed
@@ -15,11 +17,10 @@ import kwl.tripscounter.TripsCounter._
  * (at the expense of additional storage).
  *
  * Below is a simple recursive solution covering the Dynamic Programing idea via caching/memento.
- * Its complexity shall be ~ O(|N| * |E| * |Dist|) and uses storage of O(N Dist).
+ * Its complexity shall be ~ O(|N| * |E| * |Dist|) and uses storage of O(N*Dist). Might be not
+ * miraculous for very large distances (esp. storage), but it's at least not exponensial.
  *
- * TODO: get rid of recursion to support much larger graphs
- *
- * --- crap speculations below ---
+ * --- below are just unimportant details and speculations ---
  * This might be potentially improved (?) by organizing the computations in some other way (e.g.
  * divide-and-conquer alla Floyd-Warshall, consider routes between s and t via some intermediary vertex w:
  * c(s->t) = c(s->w) * c(w->t), however with cycles in place counting the # of routes seems much harder...).
@@ -47,6 +48,7 @@ trait TripsCounter extends KiwilandBase {
     // recursive helper: nPaths(s, dist) => Int
     // recursively calculates # of routes from "s" to "dest" with length exactly of "dist"
     // results are memoized in "Dynamic Programming" cache, i.e. Map[(s, dist)-> Int]
+    // TODO: get rid of non-tail recursion to support much larger graphs
     lazy val nPaths: (NodeId, Long) ==> Long = Memo {
       case (`dest`, 0) => 1  // reached destination?
       case (s, dist) =>      // otherwise, count # of distinct paths to "dest" via adjacent vertices
@@ -68,7 +70,6 @@ trait TripsCounter extends KiwilandBase {
   }
 }
 
-
 object TripsCounter {
 
   /* The classes below represent various filtering conditions */
@@ -76,8 +77,11 @@ object TripsCounter {
     // this stores either the max # of edges or the max distance
     val max_dist: Int
   }
+
   case class MaxEdgeNumCond(max_dist: Int) extends CounterCond
+
   case class ExactEdgeNumCond(max_dist: Int) extends CounterCond
+
   case class MaxDistCond(max_dist: Int) extends CounterCond
 
 }

@@ -51,16 +51,16 @@ class Graph(val edgesList: List[Edge]) {
 
 object Graph {
   type NodeId = Char
-  type DistT = Int // TODO: shall I use this instead?
-  type RouteDistT = Long // TODO: use this constant everywhere?
 
   /** main Graph "constructor" */
   def apply(edgeList: List[Edge]): Graph = new Graph(edgeList)
 
   /** create a graph from edge definitions (string like AB7) */
   def createGraph(lines: Array[String]): Graph = {
-    val edges = for (List(from, to, dist) <- lines map { _.toList } )
-    yield Edge(from, to, Integer.parseInt(dist.toString))
+    val edges = for {
+      List(from, to, dist) <- lines map { _.toList }
+    } yield Edge(from, to, Integer.parseInt(dist.toString))
+
     Graph(edges.toList)
   }
 

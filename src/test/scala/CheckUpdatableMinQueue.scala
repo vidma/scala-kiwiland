@@ -11,7 +11,6 @@ import scala.collection.mutable
  * 1. multiple popMin returns items in the sorted order
  * 2. with updates (decreaseKey), queue still work as expected (like 1)
  */
-// TODO: call the main method!
 object CheckUpdatableMinQueue extends Properties("UpdatableMinQueue") {
   // type params used for testing
   type V = Char

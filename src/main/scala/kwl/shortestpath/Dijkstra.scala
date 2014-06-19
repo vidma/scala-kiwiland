@@ -11,10 +11,10 @@ import kwl.{Graph,Edge}
  * A basic implementation  of Dijkstra's Shortest Path algorithm
  * based on a Priority Queue
  */
-trait DijkstraShortestPath extends ShortestPathBase {
+trait Dijkstra extends ShortestPathBase {
 
   def shortestPath(src: NodeId, dest: NodeId): Long = {
-    val dists = mutable.Map.empty[NodeId, Long].withDefaultValue(Long.MaxValue)
+    val dists = mutable.Map.empty[NodeId, Long]
     val visited = mutable.Set.empty[NodeId]
     val q = new SimpleUpdatableMinQueue[Long, NodeId]()
     // enqueue the edges directly reachable from src
@@ -31,15 +31,15 @@ trait DijkstraShortestPath extends ShortestPathBase {
       visited += s
       // if some edge, s->v, improves dist of vertex v, update v's priority in the queue
       for (Edge(_, v, edge_len) <- g.outEdges(s) if !visited.contains(v);
-           better_dist = dists(s) + edge_len if better_dist < dists(v)) {
-        q.updateKey(better_dist, v)
-        dists(v) = better_dist
+           newDist = dists(s) + edge_len if !dists.contains(v) || newDist < dists(v)) {
+        q.updateKey(newDist, v)
+        dists(v) = newDist
       }
     }
-    dists.getOrElse(dest, default=NO_PATH_EXISTS)
+    dists.getOrElse(dest, default = NO_PATH_EXISTS)
   }
 }
 
-object DijkstraShortestPath {
-  def apply(g: Graph) = new KiwilandBase(g) with DijkstraShortestPath
+object Dijkstra {
+  def apply(g: Graph) = new KiwilandBase(g) with Dijkstra
 }

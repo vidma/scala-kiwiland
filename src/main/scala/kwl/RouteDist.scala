@@ -15,7 +15,7 @@ trait RouteDist extends KiwilandBase {
   def routeDist(route: List[NodeId]): Int = route match {
     // fetch the first two nodes on the route if any, and continue recursively
     case from :: to :: rest =>
-      g.adjMatrixDist.getOrElse(key=(from, to), default=reportNoRoute) + routeDist(to :: rest)
+      g.adjMatrixDist.getOrElse((from, to), reportNoRoute) + routeDist(to :: rest)
     case _ => 0
   }
 

@@ -35,8 +35,8 @@ Generally, practicality & simplicity is preferred over performance (unless the t
  * ```tripscounter``` package:
     - ```TripsCounter``` - a recursive counter of distinct routes of dynamic-programing nature. 
       It is decorated with result caching/memo that guarantees polynomic running time. 
-    - ```TripsCounterRecursive``` an alternative purely recursive implementation useful in 
-      testing/validating the earlier
+    - ```TripsCounterNaive``` an alternative naively recursive implementation (still useful in 
+      testing/validating the earlier)
  * ```utils/``` package:
    - ```utils/SimpleUpdatableMinQueue``` - a simple updatable min-queue (if needbe, it could be 
    replaced by e.g. a MinHeap with decreaseKey)

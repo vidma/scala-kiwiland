@@ -2,23 +2,23 @@ package kwl.tripscounter
 
 import kwl.Graph._
 import kwl.{Edge, KiwilandBase}
-import kwl.tripscounter.TripsCounterRecursive.getGuards
+import kwl.tripscounter.TripsCounterNaive.getGuards
 import kwl.tripscounter.TripsCounter._
 
 /**
- *  A Different implementation of even simpler recursive solution.
+ *  A Different implementation of even simpler recursive solution
  * */
-trait TripsCounterRecursive extends KiwilandBase {
+trait TripsCounterNaive extends KiwilandBase {
 
   def countTrips(src: NodeId, dest: NodeId, cond: CounterCond): Long = {
     // customize the behaviour according to search conditions
     val (searchGuard, reachedGuard) = getGuards(cond)
     // inner recursive helper
     def getCount(current: NodeId, stops_used: Int, total_dist: Int): Long = {
-      var count: Long = 0
+      var count = 0L
       // Loop over all adjacent edges
-      for (Edge(_, edge_to, edge_dist) <- g.outEdges(current)) {
-        val new_dist = total_dist + edge_dist
+      for (Edge(_, edge_to, edge_len) <- g.outEdges(current)) {
+        val new_dist = total_dist + edge_len
         // check if the final destination is reached in the required way
         if (dest == edge_to && reachedGuard(stops_used + 1, new_dist)) {
           count += 1
@@ -28,7 +28,6 @@ trait TripsCounterRecursive extends KiwilandBase {
           count += getCount(edge_to, stops_used + 1, new_dist)
         }
       }
-
       count
     }
     // call the inner recursive function
@@ -37,10 +36,12 @@ trait TripsCounterRecursive extends KiwilandBase {
 
 }
 
-object TripsCounterRecursive {
-  // instead of polluting the CounterCond classes, store the search conditions here
-  // (this is just a backup implementation)
-  def getGuards(cond: CounterCond): ((Int, Int) => Boolean, (Int, Int) => Boolean) = {
+object TripsCounterNaive {
+  /** instead of polluting the main CounterCond classes (see TripsCounter.scala),
+    * better obtain the search conditions from here (this is just a backup implementation anyway)
+    */
+  type GuardFunc = (Int, Int) => Boolean
+  def getGuards(cond: CounterCond): (GuardFunc, GuardFunc) = {
     // default guards
     var searchGuard, reachedGuard = (stops: Int, dist: Int) => stops <= cond.max_dist
     cond match {

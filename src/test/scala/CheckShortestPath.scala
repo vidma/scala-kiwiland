@@ -3,7 +3,8 @@ import org.scalacheck.Properties
 import org.scalacheck.Prop.forAll
 import org.scalacheck.Prop._
 
-import kwl.{FloydWarshall, DijkstraShortestPath, Graph}
+import kwl.shortestpath.{FloydWarshall, DijkstraShortestPath}
+import kwl.Graph
 import GraphGenerator.arbGraph
 
 

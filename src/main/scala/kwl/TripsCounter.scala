@@ -4,28 +4,31 @@ import kwl.Graph._
 import kwl.TripsCounter._
 
 import kwl.utils.Memo
-import kwl.utils.Memo._
+import kwl.utils.Memo.==>
 
 
 /**
- * At first sight it might look that bruteforce enumeration of all possible paths could be the only
- * feasible solution. Happily, if cycles in the paths are allowed (and they are), dynamic programming
- * comes to help, based on an observation that the # of different sub-routes from s to dest (s -> dest)
- * depend only on (s, dest, dist) independently of any steps taken earlier. This guarantees
- * polynomial runtime (at the expense of a small additional storage).
+ * At very first sight, it might look that the only feasible solution could be the
+ * brute-force enumerating all possible paths. Happily, if cycles are allowed
+ * in the paths, dynamic programming comes to help, based on an observation that
+ * the # of different sub-routes from s to dest (s -> t) depend only on (s, t, dist)
+ * independently of any steps taken earlier. This guarantees the polynomial runtime
+ * (at the expense of additional storage).
  *
- * Note that there are two related problems: first, on acyclic graphs the solution is really simple:
+ * Below is a simple recursive solution covering the Dynamic Programing idea via caching/memento.
+ * Its complexity shall be ~ O(|N| * |E| * |Dist|) and uses storage of O(N Dist).
+ *
+ * TODO: get rid of recursion to support much larger graphs
+ *
+ * --- Blah Blah talk below ---
+ * This might be potentially improved (?) by organizing the computations in some other way (e.g.
+ * divide-and-conquer alla FloydWarshall, consider routes between s and t via some intermediary vertex w:
+ * c(s->t) = c(s->w) * c(w->t), however with cycles in place counting the # of routes seems much harder...).
+ *
+ * Note: there are two related problems: first, on acyclic graphs the solution is really simple:
  * count paths while walking in a topological order [3, 4]. On the other hand, finding # of simple
  * paths (i.e. acyclic) in a cyclic graph is P-complete [1-2,5], where, approximations are sometimes
  * preferred.
- *
- * Below is a simple recursive solution covering the Dynamic Programing idea via caching/memento.
- *
- * Its complexity shall be ~ O(|N| * |E| * |Dist|) and uses storage of O(N Dist).
- * This might be theoretically improved by organizing the computations in other way, but certainly is
- * better than the naive bruteforce.
- *
- * TODO: get rid of recursion to support much larger graphs
  *
  * Resources:
  * [1] http://cs.stackexchange.com/questions/423/how-hard-is-counting-the-number-of-simple-paths-between-two-nodes-in-a-directed

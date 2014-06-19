@@ -5,9 +5,10 @@ import org.scalatest.prop.Checkers
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import java.lang.Exception
+
 import kwl._
 import TripsCounter._
-
+import kwl.shortestpath.FloydWarshall
 
 @RunWith(classOf[JUnitRunner])
 class TestSuite extends FunSuite with Checkers {
@@ -67,6 +68,12 @@ class TestSuite extends FunSuite with Checkers {
   test("test 9") {
     assertResult(9) {
       kwl.shortestPath('B', 'B')
+    }
+  }
+
+  test("new test: shortest path when no route exists") {
+    assertResult(kwl.NO_PATH_EXISTS) {
+      kwl.shortestPath('A', 'Z')
     }
   }
 

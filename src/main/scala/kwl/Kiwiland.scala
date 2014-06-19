@@ -4,6 +4,7 @@
 package kwl
 
 import Graph.createGraph
+import kwl.shortestpath.DijkstraShortestPath
 import kwl.TripsCounter.{MaxDistCond, MaxEdgeNumCond, ExactEdgeNumCond}
 
 /** The base class which provides the graph "g" to all its subclassess/traits */

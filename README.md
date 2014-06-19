@@ -1,6 +1,6 @@
 Installation
 ----------------------------
-The only prerequisite is ```sbt```, the [Scala Build Tool](www.scala-sbt.org). 
+The only prerequisite is ```sbt```, the Scala's [ Simple Build Tool](www.scala-sbt.org). 
 Sbt will take care of all the dependencies, will compile and allow running the code and  tests easily. 
   
 When you run any ```sbt``` command, it  will automatically recompile the modified code if needed.
@@ -21,22 +21,27 @@ Code Structure
 ----------------------------
 The Main code is in [src/main/scala/kwl/](src/main/scala/kwl/) containing the files described below. 
 The design decisions are briefed next to each class/file name, with more details in the code.
-Generally, simplicity is preferred over performance (unless explicitly needed).
+Generally, practicality & simplicity is preferred over performance (unless the three are easy to combine).
 
  * ```Kiwiland``` - the entry point (which mixes in the other functionality)
  * ```Graph``` - a simple graph that, in addition to flat adjacency-list, provides a couple of other
   lazily calculated representations each suited for different use cases, e.g. 
   dict of adjacency lists by out-vertex, adjacency matrix, renaming of vertices into numbered ones etc 
  * ```RouteDist``` - simply calculates the distance of a given route
- * ```ShortestPath``` - implements 1) Floyd-Warshall and 2) Dijkstra based on min-queue
+ * ```shortestpath``` package implements:
+    - Floyd-Warshall
+    - Dijkstra based on a simple min-queue (if need be, performance can be improved by using a 
+      better queue, e.g. a Heap queue with a decreaseKey)
  * ```TripsCounter``` - a recursive counter of distinct routes of dynamic-programing nature. 
    it is decorated with result caching/memo that guarantees polynomic running time 
-   (there is also a second purely recursive implementation)
+    - there is also a second purely recursive implementation useful testing/validating the earlier
  * ```utils/```
-   - ```utils/SimpleUpdatableMinQueue``` - basic updatable min-queue on top of scala's Scala's HashSet
-     * *Note: for better performance an adapted minHeap shall be used, which would keep track of the physical location of each entry in the heap*
-   - ```utils/Memo``` - a basic generic Memo "decorator" (7 lines of beautiful external code)     
+   - ```utils/SimpleUpdatableMinQueue``` - a simple updatable min-queue (if needbe, it could be 
+   replaced by e.g. a MinHeap with decreaseKey)
+   - ```utils/Memo``` - a basic generic Memento "decorator" (7 lines of beautiful external code)     
 
+**The coding style** is mostly based on the following [Scala Style Guide](http://www.codecommit.com/scala-style-guide.pdf). 
+Max Line Length of 100 chars is used.
 
 Tests
 =============================
@@ -46,7 +51,7 @@ The tests are contained in [src/test/scala/](src/test/scala/):
      - sample output from the assignment
      - running a large number of randomized tests based on arbitrary inputs generated with help of 
      the [ScalaCheck](www.scalacheck.org) lib (details below)
- * ```CheckShortestPath`` - for a number of arbitrary graphs, ensures that results by the two 
+ * ```CheckShortestPath``` - for a number of arbitrary graphs, ensures that results by the two 
    Shortest-Path algorithms are the same for all pairs of nodes  
  * ```GraphGenerator``` - generates random arbitrary graphs
  * ```CheckUpdatableMinQueue``` - generates random priority queues and checks that findMin and 
@@ -54,7 +59,3 @@ The tests are contained in [src/test/scala/](src/test/scala/):
  * ```CheckTripsCounter``` - for a number of random graphs check that the results of the two different implementations match
 
 Test results can be seen here: [![Build Status](https://travis-ci.org/vidma/scala-kiwiland.svg?branch=master)](https://travis-ci.org/vidma/scala-kiwiland)
-
-Note: a more serious project, might additionally require: 
-- more thorough testing (including more tests, checking the code coverage, e.g. with sbt-scoverage).
-- performance improvements and profiling (some are described) 

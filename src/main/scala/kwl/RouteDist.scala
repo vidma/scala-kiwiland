@@ -1,12 +1,10 @@
 package kwl
 
 import scala.util.{Try, Success, Failure}
-
 import kwl.Graph.NodeId
 
 
 trait RouteDist extends KiwilandBase {
-
   val MsgNoRouteFound = "NO SUCH ROUTE"
 
   protected def reportNoRoute = throw new Exception(MsgNoRouteFound)
